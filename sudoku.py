@@ -165,7 +165,7 @@ def celdaUnicaCandidato(tablero):
     if celda:
         return celda, candidato
     
-    celda, candidato =  celdaUnicaCandidatoColumna(tablero)
+    celda, candidato =  celdaUnicaCandidatoCol(tablero)
     return celda, candidato
 
 def confirmaCandidato(tablero, celda, candidato=None):
@@ -210,22 +210,24 @@ def prettyPrint(tablero):
             print(tablero[(i,j)], end="")
         print()
 
-def principal():
-    seguir = False
-    tablero = inicializaTablero()
+def principal(tablero):
+    seguir = True
+    #tablero = inicializaTablero()
     while seguir:
         # - ver si ya esta --> return tablero
         if verificarSolucion(tablero):
+            if debug:
+                print(f"encuentra solución con tablero:{tablero}")
             return tablero
         # - verificar celda sin candidato --> error
-        if not verificarHayOpciones():
+        if not verificarHayOpciones(tablero):
             print(f"Error, un tablero sin solución posible: {tablero}")
             return False
 
         # - ver si alguna celda tiene un único candidato:
         #   + poner número (candidato) en tablero
         #   + next
-        celda = candidatoUnico(tablero)
+        celda = candidatoUnicoCelda(tablero)
         if celda:
             tablero = confirmaCandidato(tablero, celda)
             continue
@@ -237,15 +239,44 @@ def principal():
         if celda:
             tablero = confirmaCandidato(tablero, celda, candidato=candidato)
             continue
-        
+
         # - ver si par candidatos en par de celdas región, fila o columna
         #   + quitar par como candidatos de otras celdas de la región/fila/columna
         #   + next
         # - ver si trio candidatos en trio de celdas región, fila o columna
         #   + quitar trio como candidatos de otras celdas de la región/fila/columna
         #   + next
+        print(f"No puedo seguir adelante: {tablero}")
+        return None
 
+debug = True
 tablero = inicializaTablero()
+tablero = confirmaCandidato(tablero, (0,6), 3)
+tablero = confirmaCandidato(tablero, (0,7), 9)
+tablero = confirmaCandidato(tablero, (1,2), 7)
+tablero = confirmaCandidato(tablero, (1,4), 1)
+tablero = confirmaCandidato(tablero, (2,2), 2)
+tablero = confirmaCandidato(tablero, (2,3), 8)
+tablero = confirmaCandidato(tablero, (2,5), 7)
+tablero = confirmaCandidato(tablero, (3,1), 3)
+tablero = confirmaCandidato(tablero, (3,3), 5)
+tablero = confirmaCandidato(tablero, (3,8), 8)
+tablero = confirmaCandidato(tablero, (4,1), 5)
+tablero = confirmaCandidato(tablero, (4,4), 6)
+tablero = confirmaCandidato(tablero, (4,6), 9)
+tablero = confirmaCandidato(tablero, (5,3), 1)
+tablero = confirmaCandidato(tablero, (5,4), 8)
+tablero = confirmaCandidato(tablero, (5,5), 2)
+tablero = confirmaCandidato(tablero, (5,8), 6)
+tablero = confirmaCandidato(tablero, (6,0), 5)
+tablero = confirmaCandidato(tablero, (6,4), 2)
+tablero = confirmaCandidato(tablero, (7,1), 6)
+tablero = confirmaCandidato(tablero, (7,2), 3)
+tablero = confirmaCandidato(tablero, (8,2), 4)
+tablero = confirmaCandidato(tablero, (8,6), 7)
+tablero = confirmaCandidato(tablero, (8,7), 8)
+print(principal(tablero))
+
 # tablero[(0,3)] = [1, 2,3,4,5,6,7,8]
 # tablero[(1,3)] = [1, 2,3,4,5,6,7,8]
 # tablero[(2,3)] = [1, 2,3,4,5,6,7,8]
@@ -256,9 +287,10 @@ tablero = inicializaTablero()
 # tablero[(8,3)] = [1, 2,3,4,5,6,7,8]
 
 
-celda, candidato = celdaUnicaCandidatoCol(tablero)
-print(celda)
-print(candidato)
+# celda, candidato = celdaUnicaCandidatoCol(tablero)
+# print(celda)
+# print(candidato)
+
 #tablero = confirmaCandidato(tablero, (8,8))
 #prettyPrint(tablero)
 # print(tablero[(0,8)])
