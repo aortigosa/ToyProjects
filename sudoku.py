@@ -27,7 +27,7 @@ def verificarHayOpciones(tablero):
                 return False
     return True
 
-def generaFila(celda, contieneCelda=True):
+def generaFilaCelda(celda, contieneCelda=False):
     """devuelve lista de celdas con la misma fila que la celda argumento"""
     fila = celda[0]
     lista = []
@@ -37,7 +37,7 @@ def generaFila(celda, contieneCelda=True):
         lista.remove(celda)
     return lista
     
-def generaColumna(celda, contieneCelda=True):
+def generaColumnaCelda(celda, contieneCelda=False):
     """devuelve lista de celdas con la misma columna que la celda argumento"""
     col = celda[1]
     lista = []
@@ -47,7 +47,7 @@ def generaColumna(celda, contieneCelda=True):
         lista.remove(celda)
     return lista
 
-def generaRegionCelda(celda, contieneCelda=True):
+def generaRegionCelda(celda, contieneCelda=False):
     """devuelve la lista de celdas en la misma región que la celda argumento"""
     x = celda[0]
     y = celda[1]
@@ -151,7 +151,6 @@ def celdaUnicaCandidatoCol(tablero):
                         return celda, d
     return None,None
 
-
 def celdaUnicaCandidato(tablero):
     """ Retorna si existe alguna celda que contiene un candidato que no se repite en
     otra celda de la region/fila/columna.
@@ -167,6 +166,30 @@ def celdaUnicaCandidato(tablero):
     
     celda, candidato =  celdaUnicaCandidatoCol(tablero)
     return celda, candidato
+
+def 2celdas2valores(tablero):
+    """Busca si hay dos celdas en una region/fila/columna con solo un par de valores (los mismos).
+        Esos valore no pueden aparecer en otra celda de la misma region/fila/columna (los quita)
+    """
+    # vamos a recorrer todas las celdas del tablero buscando una que solo tenga un par de valores
+    encontrado = False
+    for clave, valor in tablero.items():
+        if isinstance(valor, list) and len(valor) == 2:
+            # si la encontramos, vemos si eso se repite dentro de la region, la fila o la columna.
+            v1 = valor[0]
+            v2 = valor[1]
+            celdas = generaRegionCelda(valor)
+            for c in celdas:
+                contenido = tablero[c]
+                if isinstance(contenido, list) and len(contenido) == 2 and v1 in contenido and v2 in contenido:
+                    # si eso ocurre, eliminamos los valores como candidatos de otras celdas en la 
+                    # region, fila o columna, según corresponda
+                    celdas.remove(c)
+                    for c2 in celdas:
+                        contenido = tablero[c]
+                        if isinstance(contenido, list):
+                            if v1 in contenido:
+                                tablero[c2].remove()
 
 def confirmaCandidato(tablero, celda, candidato=None):
     """Si candidato no es suministrado, asume que celda contiene un candidato único.
@@ -190,13 +213,13 @@ def confirmaCandidato(tablero, celda, candidato=None):
             if final in tablero[c]:
                 tablero[c].remove(final)
 
-    lista = generaFila(celda, contieneCelda=False)
+    lista = generaFilaCelda(celda, contieneCelda=False)
     for c in lista:
         if isinstance(tablero[c], list):
             if final in tablero[c]:
                 tablero[c].remove(final)
 
-    lista = generaColumna(celda, contieneCelda=False)
+    lista = generaColumnaCelda(celda, contieneCelda=False)
     for c in lista:
         if isinstance(tablero[c], list):
             if final in tablero[c]:
@@ -229,6 +252,8 @@ def principal(tablero):
         #   + next
         celda = candidatoUnicoCelda(tablero)
         if celda:
+            if debug:
+                print(f"encuentra una celda con única posibildad:{celda}")
             tablero = confirmaCandidato(tablero, celda)
             continue
 
@@ -237,6 +262,8 @@ def principal(tablero):
         #   + next
         celda, candidato = celdaUnicaCandidato(tablero)
         if celda:
+            if debug:
+                print(f"encuentra una celda con candidato que no se repite:{celda, candidato}")
             tablero = confirmaCandidato(tablero, celda, candidato=candidato)
             continue
 
@@ -275,6 +302,8 @@ tablero = confirmaCandidato(tablero, (7,2), 3)
 tablero = confirmaCandidato(tablero, (8,2), 4)
 tablero = confirmaCandidato(tablero, (8,6), 7)
 tablero = confirmaCandidato(tablero, (8,7), 8)
+print("Tablero inicial")
+print(tablero)
 print(principal(tablero))
 
 # tablero[(0,3)] = [1, 2,3,4,5,6,7,8]
