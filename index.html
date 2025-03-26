@@ -31,15 +31,5 @@
   <p>¿Y si esta página fuera una copia de tu banco?</p>
   <p>¿Y si estuviera capturando tus contraseñas?</p>
   <p class="warning">Piensa antes de escanear.</p>
-
-  <p id="contador" class="warning">Visitantes: cargando...</p>
-
-  <script>
-    fetch('https://api.countapi.xyz/hit/aortigosa.github.io/ToyProjects')
-      .then(response => response.json())
-      .then(data => {
-        document.getElementById('contador').innerText = `Visitantes: ${data.value}`;
-      });
-  </script>
 </body>
 </html>
