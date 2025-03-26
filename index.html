@@ -35,7 +35,7 @@
   <p id="contador" class="warning">Visitantes: cargando...</p>
 
   <script>
-    fetch('https://api.countapi.xyz/hit/aortigosa.github.io/ToyProjects/')
+    fetch('https://api.countapi.xyz/hit/aortigosa.github.io/ToyProjects')
       .then(response => response.json())
       .then(data => {
         document.getElementById('contador').innerText = `Visitantes: ${data.value}`;
